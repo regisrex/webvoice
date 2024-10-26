@@ -1,23 +1,50 @@
-import { Button } from "@/common/ui/button";
-import LoadingAnimation from "@/common/ui/loadingAnimation";
-import { Typography } from "@/common/ui/typography";
+'use client'
+import 'regenerator-runtime';
 
-export default function Home() {
+import { Button } from '@/common/ui/button';
+import { MicrophoneIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+
+const Dictaphone = () => {
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
+
+
+  const [supportsSpeech, setSupportsSpeech] = useState(false)
+
+  useEffect(() => {
+    if (!browserSupportsSpeechRecognition) {
+      setSupportsSpeech(false)
+    } else {
+      setSupportsSpeech(true)
+    }
+  }, [])
+
+  if (!supportsSpeech) return <div>Doesn't support speech</div>
   return (
-    <div className="flex min-h-screen flex-col items-center text-center justify-between p-24">
-      <LoadingAnimation />
-      <h1 className="text-4xl font-black text-center bg-gradient-to-br from-emerald-600 to-emerald-400 bg-clip-text text-transparent">
-        Zepto
-      </h1>
-      {/* <Logo theme="dark" /> */}
-      <Typography variant={'title'} className="">A web starter template for starting apps easily</Typography>
-      <Typography variant={'paragraph'} className="w-1/2">website starter with preconfigured things to bootstrap your site faster</Typography>
-      <div className="flex items-center gap-6">
-        <Button variant={'primary'}>Button</Button>
-        <Button variant={'bordered'}>Button</Button>
-        <Button variant={'secondary'}>Button</Button>
-        <Button variant={'link'}>Button</Button>
+    <div className='flex flex-col items-center text-center gpa-10  py-10'>
+      {/* <p className='text-lg'>Microphone: {listening ? 'on' : 'off'}</p> */}
+      <div className={`flex items-center justify-center aspect-square p-10 rounded-full   ${listening ? "stroke-red-50" : "stroke-slate-50"}`}>
+        <MicrophoneIcon className={`w-10 ${listening ? "stroke-red-400" : "stroke-slate-500"}`} />
+      </div>
+      <div className='flex items-center gap-10 mt-10'>
+
+        <Button variant={'secondary'} onClick={() => SpeechRecognition.startListening({})}>Listen</Button>
+        <Button variant={'secondary'} onClick={SpeechRecognition.stopListening}>Stop</Button>
+        <Button variant={'secondary'} onClick={resetTranscript}>Reset</Button>
+      </div>
+
+      <div className='flex flex-col gap-2  w-[60vw]'>
+
+        <p className='text-left'>Transcribed text</p>
+        <p className='p-10 rounded-md  border border-slate-100 bg-slate-50'>{transcript}</p>
       </div>
     </div>
   );
-}
+};
+export default Dictaphone;

@@ -1,3 +1,4 @@
+import 'regenerator-runtime';
 import BaseLayout from "@/layouts/base-layout";
 import type { Metadata } from "next";
 import "./globals.css";
